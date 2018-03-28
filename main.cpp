@@ -101,6 +101,10 @@ int main(int argc, const char* argv[])
 		std::ofstream precisionLog("Precision.txt");
 		fullStat.printStatistics(precisionLog, StatisticsElementPrecision);
 
+		//²¹³äpsnr
+		std::ofstream PSNRLog("Psnr.txt");
+		fullStat.printStatistics(PSNRLog, StatisticsElementPsnr);
+
 		std::ofstream HomographyErrorLog(" HomographyError.txt ");
 		fullStat.printStatistics(HomographyErrorLog, StatisticsElementHomographyError);
 		std::ofstream MatchingRatioLog("MatchingRatio.txt");

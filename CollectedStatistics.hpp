@@ -18,7 +18,8 @@ typedef enum
     StatisticsElementPatternLocalization,
     StatisticsElementAverageReprojectionError,
     StatisticsElementRecall,
-    StatisticsElementPrecision
+    StatisticsElementPrecision,
+	StatisticsElementPsnr   //补充的psnr
 
 } StatisticElement;
 
@@ -38,6 +39,8 @@ struct FrameMatchingStatistics
 
     float recall;
     float precision;
+
+	double psnr;//补充一个psnr评价配准效果
 
     float consumedTimeMs;
     cv::Scalar reprojectionError;

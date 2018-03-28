@@ -27,8 +27,8 @@
     for i=1:length(files),  
         % get file name and create a correspoinding figure  
         filename = files(i,1).name; %访问第i个文件名 
-        nameFigure{i} = filename(1:end-4);  
-        figure('Name',nameFigure{i},'Position',[20 40 1240 780]);   
+        nameFigure{i} = filename(1:end-4);  %把.txt去掉
+        figure('Name',nameFigure{i},'Position',[20 40 1240 780]);%name属性和位置属性   
           
         % initialize 2 cells to store title name and legends of each plot  
         nameTitle{1} = '';  
@@ -84,6 +84,8 @@
                         'HorizontalAlignment','left','VerticalAlignment','middle',...  
                         'FontSize',7);                  
                 end  
+            
+        
                   
                 %% Change the color of each bar  
                 ch = get(h,'Children'); % get children of the bar group直方图默认是群，这里获得单个bar
@@ -114,18 +116,23 @@ colormap(summer(k)); % 这样会产生一个128 * 3的矩阵，分别代表[R G B]的值
         %% process other documents  
             nDataRow = 0;   % rows of numerical data in each plot  
             nPlot = 0;      % number of plots  
-            data{1} = 0;    % all numerical data in current document  
+            clear data;%每次循环（读一个txt文件）要清空一下存放数据的元胞
+            data{1}= 0;    %否则在最后一次循环中会报错：元胞内容赋给非元胞数组对象
+            % all numerical data in current document
+            data{2}=0;
+            %元胞初始化下，去掉也可以
               
             %% analyze each line  
-            tline = fgetl(fid);  
-            while ischar(tline) && ~strcmp(tline, -1),    
+            tline = fgetl(fid);   %读取每一行数据
+            while ischar(tline) && ~strcmp(tline, -1),  %strcmp比较是否一样  
                 % split the line into strings by '\t'      
                 args = regexp(tline,'\t','split');  
                 if strcmp(args{end},''), args = args(1:end-1); end; % remove the last empty one  
                   
-                % the line which contains only one string   
+                % the line which contains only one string  如果一行只有一个字符，那就说明要开始新一幅图像 
                 % is recognized as the beginning of a new plot  
-                % the string is stored as plot title  
+                % the string is stored as plot title
+                % 并且把这行唯一的字符作为图像名称（变换类型）
                 % which represents the transformation type  
                 if length(args) == 1,  
                     nDataRow = 0;  
@@ -138,10 +145,10 @@ colormap(summer(k)); % 这样会产生一个128 * 3的矩阵，分别代表[R G B]的值
                     % which represent feature methods  
                     if ~isempty( find( tline=='"', 1 ) ),  
                         tline(tline == '"') = '';   
-                        nameLegend{ nPlot } = args(2:end);  
+                        nameLegend{ nPlot } = args(2:end); %算法名字 
                     else  
                     % the line without '""'s contains numerical data  
-                    % which represent experiment data  
+                    % which represent experiment data  没有双引号的就是实验数据部分
                         nDataRow = nDataRow + 1;  
                         for n = 1:length(args),   
                             data{ nPlot }(nDataRow,n) = str2double( args{n} );   
@@ -152,8 +159,9 @@ colormap(summer(k)); % 这样会产生一个128 * 3的矩阵，分别代表[R G B]的值
             end            
               
             %% plotting  
-            cmap = colormap( jet( length( nameLegend{1} ) ) ); % cmap: table of line color  
-            for p = 1:nPlot,  
+            cmap = colormap( jet( length( nameLegend{1} ) ) ); % cmap: table of line color 
+            %jet是预定义的色图矩阵 表示蓝头红尾饱和色
+            for p = 1:nPlot,  %nplot行只有一个字符 那就有nplot个图
                 subplot(ceil(nPlot/2), 2, p);   
                 xdata = data{p}(:,1);  
                 ydata = data{p}(:,2:end);  

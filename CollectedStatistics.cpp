@@ -24,7 +24,7 @@ std::ostream& null(std::ostream& str)
     return str << "NULL";
 }
 
-FrameMatchingStatistics::FrameMatchingStatistics()
+FrameMatchingStatistics::FrameMatchingStatistics()//构造初始化
 {
     totalKeypoints = 0;
     argumentValue = 0;
@@ -38,6 +38,7 @@ FrameMatchingStatistics::FrameMatchingStatistics()
     consumedTimeMs = 0;
     homographyError = std::numeric_limits<float>::max();
     isValid = false;
+	psnr = 0.0;
 }
 
 
@@ -83,6 +84,10 @@ bool FrameMatchingStatistics::tryGetValue(StatisticElement element, float& value
         case StatisticsElementRecall:
             value = recall;
             return true;
+			//补充的PSNR
+		case StatisticsElementPsnr:
+			value = psnr;
+			return true;
         default:
             return false;
     }
@@ -193,11 +198,13 @@ std::ostream& CollectedStatistics::printStatistics(std::ostream& str, StatisticE
     CollectedStatistics::OuterGroupLine report = groupByTransformationThenByAlgorithm();
 
     for (CollectedStatistics::OuterGroupLine::const_iterator tIter = report.begin(); tIter != report.end(); ++tIter)
+
+		//OuterGroupLine是string, GroupedByArgument组成的map
     {
         std::string transformationName = tIter->first;
         str << quote(transformationName) << std::endl;
 
-        const GroupedByArgument& inner = tIter->second;
+        const GroupedByArgument& inner = tIter->second;//参数变量
 
         str << "Argument" << tab;
         for (size_t i=0; i<inner.algorithms.size(); i++)
@@ -257,6 +264,8 @@ std::ostream& CollectedStatistics::printPerformanceStatistics(std::ostream& str)
 
         double avgPerFrame    = std::accumulate(timePerFrames.begin(),   timePerFrames.end(), 0.0)     / timePerFrames.size();
         double avgPerKeyPoint = std::accumulate(timePerKeyPoint.begin(), timePerKeyPoint.end(), 0.0) / timePerKeyPoint.size();
+
+		//补充特征点数
 		double avgnumperFrame = std::accumulate(numberPerFrame.begin(), numberPerFrame.end(), 0.0) / numberPerFrame.size();
 
         str << quote(alg->first) << tab

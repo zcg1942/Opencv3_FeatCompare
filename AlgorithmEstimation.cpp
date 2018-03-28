@@ -158,13 +158,13 @@ bool performEstimation
         s.totalKeypoints = resKpReal.size();
         s.consumedTimeMs = (end - start) * toMsMul;
         s.precision = correctMatches / (float) matchesCount;
-        s.recall = correctMatches / (float) visibleFeatures;
+        s.recall = correctMatches / (float) visibleFeatures;//正确匹配对数占可见特征点的比例
 
 		s.correctMatchesPercent = s.precision;
 		s.percentOfMatches = (float)matchesCount / (s.totalKeypoints);
 		//matchingRatio再通过以上二者的乘积计算 要不然match都是0。matchingRatio()     const { return correctMatchesPercent * percentOfMatches * 100.0f; };
 
-
+		
         
         // Compute matching statistics
         //if (homographyFound)
@@ -216,6 +216,17 @@ bool performEstimation
 			s.homographyError = std::min(error, 1.0f);//直接1.0是double型，后面加f变成float型的
 			//只存放小于1的错误
 
+			//计算psnr
+			cv::Mat srcImage = transformedImage.clone();
+			cv::Mat dstImage = sourceImage.clone();
+			//cv::perspectiveTransform(srcImage, dstImage,homography.inv()); //将待配准图像按照求出的矩阵配准
+			//输入并不是图像，而是图像对应的坐标
+			cv::warpPerspective(srcImage, dstImage, homography.inv(), dstImage.size(), CV_INTER_CUBIC);
+			s.psnr = PSNR(dstImage, gray);//返回的是double类型 要求输入是灰度图像
+			//求出的psnr怎么一直是0??还中断。。
+
+			
+
 			if (0 && error >= 1)//0&&??
 			{
 				std::cout << "H expected:" << expectedHomography << std::endl;
@@ -262,7 +273,7 @@ cv::Scalar computeReprojectionError(const Keypoints& source, const Keypoints& qu
         dstPoints.push_back(query[matches[i].queryIdx].pt);// //trainIdx为train描述子的索引，match函数中后面的那个描述子  
     }
 
-    cv::perspectiveTransform(dstPoints, dstPoints, homography.inv());//利用求出的变换矩阵把特征点变换到一个坐标系中，要想配准，就要求逆
+    cv::perspectiveTransform(dstPoints, dstPoints, homography.inv());//利用求出的变换矩阵把特征点变换到一个坐标系中，要想配准，就要求逆  输入并不是图像，而是图像对应的坐标
     for (int i = 0; i < pointsCount; i++)
     {
         const cv::Point2f& src = srcPoints[i];
