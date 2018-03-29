@@ -156,7 +156,7 @@ bool performEstimation
         // Some simple stat:
         s.isValid        = homographyFound;
         s.totalKeypoints = resKpReal.size();
-        s.consumedTimeMs = (end - start) * toMsMul;
+        s.consumedTimeMs = (end - start) * toMsMul;//匹配耗时
         s.precision = correctMatches / (float) matchesCount;
         s.recall = correctMatches / (float) visibleFeatures;//正确匹配对数占可见特征点的比例
 
