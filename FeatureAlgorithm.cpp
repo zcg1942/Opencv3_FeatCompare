@@ -29,8 +29,8 @@ cv::Ptr<cv::DescriptorMatcher> matcherForDescriptorType(int descriptorType, int 
 FeatureAlgorithm::FeatureAlgorithm(const std::string& n, cv::Ptr<cv::FeatureDetector> d, cv::Ptr<cv::DescriptorExtractor> e, bool useBruteForceMather)
 : name(n)
 , knMatchSupported(false)
-, detector(d)
-, extractor(e)
+, detector(d)//检测子
+, extractor(e)//提取算子
 , matcher(matcherForDescriptorType(e->descriptorSize(), e->defaultNorm(), useBruteForceMather))
 {
     CV_Assert(d);
@@ -40,7 +40,7 @@ FeatureAlgorithm::FeatureAlgorithm(const std::string& n, cv::Ptr<cv::FeatureDete
 FeatureAlgorithm::FeatureAlgorithm(const std::string& n, cv::Ptr<cv::Feature2D> fe, bool useBruteForceMather)
 : name(n)
 , knMatchSupported(false)
-, featureEngine(fe)//构造函数，特征点引擎cv::Ptr<cv::Feature2D>           featureEngine;
+, featureEngine(fe)//构造函数，特征点引擎cv::Ptr<cv::Feature2D>           featureEngine;Feature2D继承自虚拟算法
 , matcher(matcherForDescriptorType(fe->descriptorSize(), fe->defaultNorm(), useBruteForceMather))
 {
     CV_Assert(fe);
@@ -51,14 +51,14 @@ bool FeatureAlgorithm::extractFeatures(const cv::Mat& image, Keypoints& kp, Desc
 {
     assert(!image.empty());
 
-    if (featureEngine)
+    if (featureEngine)//之前对FeatureAlgorithm进行了重载，如果用了featureEngine就直接得到描述子
     {
         //(*featureEngine)(image, cv::noArray(), kp, desc);
 		featureEngine->detectAndCompute(image, cv::noArray(), kp, desc);
     }
     else
     {
-        detector->detect(image, kp);
+        detector->detect(image, kp);//如果没有featureEngune就先检测再提取
     
         if (kp.empty())
             return false;
@@ -75,7 +75,7 @@ void FeatureAlgorithm::matchFeatures(const Descriptors& train, const Descriptors
     matcher->match(query, train, matches);
 }
 
-void FeatureAlgorithm::matchFeatures(const Descriptors& train, const Descriptors& query, int k, std::vector<Matches>& matches) const
+void FeatureAlgorithm::matchFeatures(const Descriptors& train, const Descriptors& query, int k, std::vector<Matches>& matches) const//matchFeatures的重载，分别利用穷举和knn，参数有int型k就是knn
 {
     assert(knMatchSupported);
     matcher->knnMatch(query, train, matches, k);

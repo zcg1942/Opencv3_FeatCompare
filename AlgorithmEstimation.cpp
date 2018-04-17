@@ -279,8 +279,8 @@ cv::Scalar computeReprojectionError(const Keypoints& source, const Keypoints& qu
         const cv::Point2f& src = srcPoints[i];
         const cv::Point2f& dst = dstPoints[i];
 
-        cv::Point2f v = src - dst;
-        distances.push_back(sqrtf(v.dot(v)));//算出每一对特征点的距离
+        cv::Point2f v = src - dst;//匹配对中的特征点之差
+        distances.push_back(sqrtf(v.dot(v)));//算出每一对特征点的距离，是为了计算衡量配准的标准，而不是找对应点
     }
 
     
