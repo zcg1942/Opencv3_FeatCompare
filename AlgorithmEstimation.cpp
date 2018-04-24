@@ -100,6 +100,7 @@ bool performEstimation
             continue;
 
         alg.matchFeatures(sourceDesc, resDesc, matches);//由两幅图的描述子train和query得到匹配对
+		//这里可以用knn优化 但不能直接用rob Hess的代码，他的代码是c语言写的
 
         int64 end = cv::getTickCount();
 

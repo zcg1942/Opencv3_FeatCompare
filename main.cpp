@@ -29,6 +29,7 @@ int main(int argc, const char* argv[])
     algorithms.push_back(FeatureAlgorithm("BRISK", cv::BRISK::create(), useBF));
     algorithms.push_back(FeatureAlgorithm("SURF",  cv::xfeatures2d::SURF::create(),  useBF));//surf,sift在命名空间xfeatures2d中
 	algorithms.push_back(FeatureAlgorithm("SIFT", cv::xfeatures2d::SIFT::create(), useBF));
+	
 	//algorithms.push_back(FeatureAlgorithm("FREAK", cv::xfeatures2d::FREAK::create(), useBF));
    /* algorithms.push_back(FeatureAlgorithm("FREAK", cv::fPtr<cv::FeatureDetector>(new cv::SurfFeatureDetector(2000,4)), cv::Ptr<cv::DescriptorExtractor>(new cv::FREAK()), useBF));*/
 
