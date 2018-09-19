@@ -8,8 +8,10 @@
 #include <numeric>
 #include <fstream>
 	
-#include <opencv2\features2d\features2d.hpp> 
-#include <opencv2\xfeatures2d.hpp>
+
+#include <opencv2/features2d/features2d.hpp>    
+#include <opencv2/xfeatures2d.hpp>
+#include <opencv2/xfeatures2d/nonfree.hpp>
 
 
 const bool USE_VERBOSE_TRANSFORMATIONS = false;
@@ -23,16 +25,15 @@ int main(int argc, const char* argv[])
 
     // Initialize list of algorithm tuples:
 
-    algorithms.push_back(FeatureAlgorithm("ORB",   cv::ORB::create(),   useBF));
-    algorithms.push_back(FeatureAlgorithm("AKAZE", cv::AKAZE::create(), useBF));//AKAZE继承于Feature2D
-    algorithms.push_back(FeatureAlgorithm("KAZE",  cv::KAZE::create(),  useBF));
-    algorithms.push_back(FeatureAlgorithm("BRISK", cv::BRISK::create(), useBF));
-    algorithms.push_back(FeatureAlgorithm("SURF",  cv::xfeatures2d::SURF::create(),  useBF));//surf,sift在命名空间xfeatures2d中
+ //   algorithms.push_back(FeatureAlgorithm("ORB",   cv::ORB::create(),   useBF));
+ //   algorithms.push_back(FeatureAlgorithm("AKAZE", cv::AKAZE::create(), useBF));//AKAZE继承于Feature2D
+ //   algorithms.push_back(FeatureAlgorithm("KAZE",  cv::KAZE::create(),  useBF));
+ //   algorithms.push_back(FeatureAlgorithm("BRISK", cv::BRISK::create(), useBF));
+ //   algorithms.push_back(FeatureAlgorithm("SURF",  cv::xfeatures2d::SURF::create(),  useBF));//surf,sift在命名空间xfeatures2d中
 	algorithms.push_back(FeatureAlgorithm("SIFT", cv::xfeatures2d::SIFT::create(), useBF));
 	
-	//algorithms.push_back(FeatureAlgorithm("FREAK", cv::xfeatures2d::FREAK::create(), useBF));
-   /* algorithms.push_back(FeatureAlgorithm("FREAK", cv::fPtr<cv::FeatureDetector>(new cv::SurfFeatureDetector(2000,4)), cv::Ptr<cv::DescriptorExtractor>(new cv::FREAK()), useBF));*/
-
+	
+   //algorithms.push_back(FeatureAlgorithm("FREAK", cv::Ptr<cv::FeatureDetector>(new cv::SurfFeatureDetector(2000, 4)), cv::Ptr<cv::DescriptorExtractor>(new cv::FREAK()), useBF));
     // Initialize list of used transformations:
     if (USE_VERBOSE_TRANSFORMATIONS)
     {
